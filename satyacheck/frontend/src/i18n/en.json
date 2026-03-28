@@ -1,0 +1,82 @@
+{
+  "app": {
+    "name": "SatyaCheck",
+    "tagline": "सच की खोज | Finding Truth",
+    "welcome": "Namaste! Welcome to SatyaCheck",
+    "welcomeSub": "Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds."
+  },
+  "onboarding": {
+    "title": "What news topics interest you?",
+    "titleHi": "आपको कौन से विषय रुचिकर हैं?",
+    "subtitle": "Select your interests to get started",
+    "subtitleHi": "सत्य जानने के लिए अपनी रुचियाँ चनें",
+    "startBtn": "Start SatyaCheck →",
+    "startBtnHi": "सत्यचेक शुरू करें →"
+  },
+  "interests": {
+    "politics": "Politics",
+    "sports": "Sports",
+    "technology": "Technology",
+    "business": "Business",
+    "health": "Health",
+    "entertainment": "Entertainment",
+    "science": "Science",
+    "environment": "Environment",
+    "world": "World News",
+    "crime": "Crime",
+    "religion": "Religion",
+    "education": "Education"
+  },
+  "chat": {
+    "placeholder": "Paste news or type a claim to verify...",
+    "placeholderHi": "समाचार पेस्ट करें या सत्यापन के लिए दावा लिखें...",
+    "mcqTitle": "What are you trying to check?",
+    "mcqTitleHi": "आप क्या जानना चाहते हैं?",
+    "mcqA": "Verify a specific news headline",
+    "mcqB": "Check if a WhatsApp forward is real",
+    "mcqC": "Fact-check a political claim",
+    "mcqD": "Verify a viral social media post",
+    "mcqE": "Check regional/state-level news"
+  },
+  "verdict": {
+    "true": "VERIFIED",
+    "false": "FAKE",
+    "misleading": "MISLEADING",
+    "unverified": "UNVERIFIED",
+    "confidence": "Confidence Level",
+    "correctFacts": "Correct Facts",
+    "falseClaims": "False Claims",
+    "sources": "Sources to Verify",
+    "region": "Region & Context",
+    "shareWarning": "Share Warning",
+    "replay": "Replay Audio",
+    "share": "Share Result",
+    "copied": "Copied!"
+  },
+  "loading": {
+    "text": "Verifying... | सत्यापन हो रहा है...",
+    "textHi": "जाँच जारी है..."
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "reporter": "Reporter Character",
+    "textSize": "Text Size",
+    "speechSpeed": "Speech Speed",
+    "eyeProtection": "Eye Protection Mode",
+    "clearChat": "Clear Chat History",
+    "about": "About SatyaCheck AI",
+    "aboutText": "SatyaCheck AI is an independent fact-checking tool powered by AI. Always verify important news from official sources. We do not store your queries.",
+    "madeIn": "Made with ❤️ in India | भारत में बनाया गया"
+  },
+  "tips": [
+    "Fact check karo! 🔍",
+    "Sach jaano! 📰",
+    "Verify before sharing! ✅",
+    "Fake news mat failao! ❌",
+    "Sources check karo! 🧐",
+    "Sach hi shakti hai! 💪"
+  ],
+  "footer": "SatyaCheck AI — India's Fake News Detector | भारत का फेक न्यूज डिटेक्टर"
+}
