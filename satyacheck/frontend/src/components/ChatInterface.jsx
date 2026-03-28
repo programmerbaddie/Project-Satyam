@@ -12,25 +12,18 @@ export default function ChatInterface({
   isLoading = false,
   currentResult = null,
   reporterState = 'idle',
+  onReplay,
+  onShare,
 }) {
   const [inputValue, setInputValue] = useState('');
   const [showMCQ, setShowMCQ] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentResult]);
-
-  useEffect(() => {
-    if (inputValue.length > 0) {
-      setIsTyping(true);
-    } else {
-      setIsTyping(false);
-    }
-  }, [inputValue]);
+  }, [currentResult, isLoading]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,7 +34,7 @@ export default function ChatInterface({
     }
   };
 
-  const handleMCQSelect = (label, id) => {
+  const handleMCQSelect = (label) => {
     const fullQuery = `${label}: ${inputValue}`;
     setInputValue(fullQuery);
     setShowMCQ(false);
@@ -62,49 +55,48 @@ export default function ChatInterface({
   return (
     <div className="chat-container">
       <div className="chat-messages">
-        <motion.div
-          className="welcome-card"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            textAlign: 'center',
-            padding: '40px',
-            background: 'var(--card)',
-            borderRadius: '20px',
-            border: '2px dashed var(--primary)',
-            marginBottom: '10px',
-          }}
-        >
-          <h2 style={{ fontFamily: 'var(--font-main)', color: 'var(--accent)', marginBottom: '10px' }}>
-            नमस्ते! Welcome to SatyaCheck! 🕵️
-          </h2>
-          <p style={{ color: 'var(--text)', opacity: 0.8 }}>
-            Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds.
-          </p>
-        </motion.div>
+        {!currentResult && !isLoading && (
+          <motion.div
+            className="welcome-card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              textAlign: 'center',
+              padding: '40px',
+              background: 'var(--card)',
+              borderRadius: '20px',
+              border: '2px dashed var(--primary)',
+              marginBottom: '10px',
+            }}
+          >
+            <h2 style={{ fontFamily: 'var(--font-main)', color: 'var(--accent)', marginBottom: '10px' }}>
+              नमस्ते! Welcome to SatyaCheck! 🕵️
+            </h2>
+            <p style={{ color: 'var(--text)', opacity: 0.8 }}>
+              Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds.
+            </p>
+          </motion.div>
+        )}
 
-        {isLoading && <LoadingSpinner />}
+        {isLoading && <LoadingSpinner text="Verifying... | सत्यापन हो रहा है..." />}
 
         {currentResult && !isLoading && (
-          <VerdictCard data={currentResult} />
+          <VerdictCard
+            data={currentResult}
+            onReplay={onReplay}
+            onShare={onShare}
+          />
         )}
 
         <div ref={messagesEndRef} />
       </div>
 
       <div className="input-area">
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', marginBottom: '10px' }}>
           <AutoSuggest
             value={inputValue}
             onSelect={handleSuggestionSelect}
           />
-
-          {showSuggestions && inputValue.length < 3 && (
-            <AutoSuggest
-              value={inputValue}
-              onSelect={handleSuggestionSelect}
-            />
-          )}
         </div>
 
         {showMCQ && (
@@ -139,7 +131,7 @@ export default function ChatInterface({
           </motion.button>
         </form>
 
-        {inputValue.trim().length > 0 && !isLoading && (
+        {inputValue.trim().length > 0 && !isLoading && !showMCQ && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

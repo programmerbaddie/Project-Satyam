@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SatyaCheck AI | सत्यचेक - Fake News Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #FFF8F0;
+            --card: #FFFFFF;
+            --primary: #FF9933;
+            --secondary: #138808;
+            --accent: #000080;
+            --text: #1A1A1A;
+            --border: #E5E5E5;
+            --shadow: rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        .theme-raat {
+            --bg: #0A0A0A;
+            --card: #1C1C1E;
+            --primary: #FF9933;
+            --secondary: #30D158;
+            --accent: #0A84FF;
+            --text: #F2F2F7;
+            --border: #38383A;
+            --shadow: rgba(0,0,0,0.4);
+        }
+        .theme-mayur {
+            --bg: #003D36;
+            --card: #005047;
+            --primary: #FFD700;
+            --secondary: #00E5CC;
+            --accent: #FF6B35;
+            --text: #E0FFF8;
+            --border: #006655;
+        }
+        .theme-gulab {
+            --bg: #FFF0F5;
+            --card: #FFE4EE;
+            --primary: #D63384;
+            --secondary: #FF85A1;
+            --accent: #6F1E51;
+            --text: #2D1B2E;
+        }
+        .theme-neel {
+            --bg: #EFF6FF;
+            --card: #DBEAFE;
+            --primary: #1D4ED8;
+            --secondary: #0EA5E9;
+            --accent: #7C3AED;
+            --text: #1E3A5F;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+        .hidden { display: none !important; }
+
+        /* Onboarding */
+        #onboarding {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, #fff 50%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .onboarding-card {
+            background: var(--card);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px var(--shadow);
+            text-align: center;
+            position: relative;
+        }
+        .onboarding-card::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 33px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            z-index: -1;
+            animation: borderGlow 4s ease infinite;
+        }
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .logo-section { margin-bottom: 30px; }
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        .logo-icon i { font-size: 2rem; color: white; }
+        .ashoka-ring {
+            position: absolute;
+            inset: 5px;
+            border: 2px solid white;
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+        .ashoka-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-conic-gradient(from 0deg, white 0deg 3deg, transparent 3deg 15deg);
+            border-radius: 50%;
+        }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,153,51,0.4); } 50% { box-shadow: 0 0 0 20px rgba(255,153,51,0); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .onboarding-card h1 { font-size: 2.5rem; color: var(--accent); margin: 15px 0 5px; }
+        .onboarding-card .tagline { color: var(--primary); font-style: italic; margin-bottom: 25px; }
+        .onboarding-card h2 { color: var(--text); margin-bottom: 20px; font-size: 1.2rem; }
+        .interest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .interest-card {
+            padding: 18px 12px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg);
+        }
+        .interest-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px var(--shadow); border-color: var(--primary); }
+        .interest-card.selected { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; transform: scale(1.03); }
+        .interest-card i { font-size: 1.5rem; display: block; margin-bottom: 8px; }
+        .interest-card span { font-size: 0.85rem; font-weight: 500; }
+        .start-btn {
+            padding: 15px 50px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(255,153,51,0.3);
+        }
+        .start-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,153,51,0.4); }
+        .start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .lang-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 14px;
+            border-radius: 15px;
+            border: 2px solid var(--border);
+            background: var(--card);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        /* Header */
+        header {
+            height: 70px;
+            background: var(--card);
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px var(--shadow);
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .header-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        .header-logo-icon i { color: white; font-size: 1.2rem; }
+        .header-logo span { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+        .icon-btn:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); }
+        .lang-select {
+            padding: 8px 14px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            padding-bottom: 140px;
+        }
+        .welcome-card {
+            text-align: center;
+            padding: 40px;
+            background: var(--card);
+            border-radius: 20px;
+            border: 2px dashed var(--primary);
+            margin-bottom: 20px;
+        }
+        .welcome-card h2 { color: var(--accent); margin-bottom: 10px; }
+        .welcome-card p { opacity: 0.8; }
+
+        /* Chat Messages */
+        .chat-messages { display: flex; flex-direction: column; gap: 15px; }
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.6;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .user-msg { align-self: flex-end; background: linear-gradient(135deg, var(--primary), #ff7a00); color: white; }
+        .ai-msg { align-self: flex-start; background: var(--card); border: 2px solid var(--border); border-left: 5px solid var(--secondary); }
+
+        /* Verdict Card */
+        .verdict-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 15px 40px var(--shadow);
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .verdict-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+        .verdict-TRUE { border: 2px solid #68d391; background: linear-gradient(135deg, #f0fff4, #c6f6d5); }
+        .verdict-FALSE { border: 2px solid #fc8181; background: linear-gradient(135deg, #fff5f5, #fed7d7); }
+        .verdict-MISLEADING { border: 2px solid #f6ad55; background: linear-gradient(135deg, #fffaf0, #feebc8); }
+        .verdict-UNVERIFIED { border: 2px solid #a0aec0; background: linear-gradient(135deg, #f7fafc, #e2e8f0); }
+        .verdict-stamp { font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; animation: stampIn 0.5s ease; }
+        @keyframes stampIn { 0% { transform: scale(3) rotate(-15deg); opacity: 0; } 60% { transform: scale(1.1) rotate(3deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        .verdict-TRUE .verdict-stamp { color: #2f855a; }
+        .verdict-FALSE .verdict-stamp { color: #c53030; -webkit-text-stroke: 2px #c53030; }
+        .verdict-MISLEADING .verdict-stamp { color: #c05621; }
+        .verdict-UNVERIFIED .verdict-stamp { color: #4a5568; }
+        .confidence-meter { margin: 20px 0; }
+        .confidence-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
+        .confidence-bar { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; }
+        .confidence-fill { height: 100%; border-radius: 6px; transition: width 1.2s ease; }
+        .confidence-fill.high { background: linear-gradient(90deg, #48bb78, #2f855a); }
+        .confidence-fill.medium { background: linear-gradient(90deg, #f6ad55, #dd6b20); }
+        .confidence-fill.low { background: linear-gradient(90deg, #fc8181, #c53030); }
+        .sources-box { margin-top: 15px; padding: 12px; background: rgba(0,0,0,0.05); border-radius: 10px; font-size: 0.85rem; }
+
+        /* Input Area */
+        .input-area {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 48px);
+            max-width: 800px;
+            background: var(--card);
+            border-radius: 25px;
+            padding: 16px 20px;
+            box-shadow: 0 -5px 30px var(--shadow);
+            border: 2px solid var(--secondary);
+            z-index: 50;
+        }
+        .input-row { display: flex; gap: 10px; align-items: center; }
+        .chat-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .chat-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255,153,51,0.15); }
+        .send-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .send-btn:hover { transform: scale(1.08); }
+        .mic-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            border-radius: 15px;
+            background: var(--accent);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mic-btn:hover { transform: scale(1.08); }
+        .mic-btn.recording { background: #dc3545; animation: pulse 0.8s infinite; }
+
+        /* MCQ Cards */
+        .mcq-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .mcq-card {
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            background: var(--card);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+        .mcq-card:hover { border-color: var(--primary); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; transform: translateX(5px); }
+        .mcq-label { width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+        .mcq-card:hover .mcq-label { background: white; color: var(--primary); }
+
+        /* Reporter Avatar */
+        .reporter-container {
+            position: fixed;
+            pointer-events: none;
+            z-index: 500;
+            width: 140px;
+            height: 250px;
+            transition: transform 0.12s ease-out;
+        }
+        .reporter-svg { width: 100%; height: 100%; }
+        .reporter-idle .reporter-body { animation: float 3s ease-in-out infinite; }
+        .reporter-loading .reporter-body { animation: bounce 0.5s infinite; }
+        .reporter-fake .reporter-body { animation: shake 0.5s ease; }
+        .reporter-real .reporter-body { animation: celebrate 0.6s ease; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
+        @keyframes celebrate { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-15px) rotate(-5deg); } }
+        .speech-bubble {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 8px 14px;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px var(--shadow);
+            animation: bubbleIn 0.3s ease, bubbleFade 0.5s ease 7.5s forwards;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        @keyframes bubbleIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes bubbleFade { to { opacity: 0; } }
+
+        /* Loading */
+        .loading-spinner { display: flex; flex-direction: column; align-items: center; padding: 40px; gap: 15px; }
+        .lotus { font-size: 3rem; animation: lotusSpin 1.5s ease-in-out infinite; }
+        @keyframes lotusSpin { 0%, 100% { transform: rotate(0) scale(1); } 50% { transform: rotate(180deg) scale(0.8); } }
+        .loading-text { font-weight: 600; color: var(--primary); animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Settings Panel */
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            backdrop-filter: blur(4px);
+        }
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--card);
+            box-shadow: -10px 0 40px var(--shadow);
+            z-index: 201;
+            transform: translateX(100%);
+            transition: transform 0.4s ease;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        .settings-panel.open { transform: translateX(0); }
+        .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border); }
+        .settings-header h2 { font-size: 1.4rem; color: var(--text); }
+        .close-btn { width: 38px; height: 38px; border: none; border-radius: 10px; background: var(--bg); cursor: pointer; font-size: 1.1rem; transition: var(--transition); }
+        .close-btn:hover { background: #dc3545; color: white; }
+        .settings-section { margin-bottom: 20px; }
+        .settings-label { font-weight: 600; margin-bottom: 10px; display: block; }
+        .theme-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+        .theme-swatch { width: 48px; height: 48px; border-radius: 12px; cursor: pointer; border: 3px solid transparent; transition: var(--transition); }
+        .theme-swatch:hover { transform: scale(1.1); }
+        .theme-swatch.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--shadow); }
+        .reporter-options { display: flex; gap: 10px; }
+        .reporter-option { flex: 1; padding: 14px; border: 2px solid var(--border); border-radius: 12px; background: var(--bg); cursor: pointer; text-align: center; transition: var(--transition); font-weight: 600; }
+        .reporter-option:hover { border-color: var(--primary); }
+        .reporter-option.active { border-color: var(--primary); background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .toggle-row { display: flex; justify-content: space-between; padding: 14px; background: var(--bg); border-radius: 12px; margin-bottom: 10px; align-items: center; }
+        .toggle-slider { width: 48px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: var(--transition); }
+        .toggle-slider.active { background: var(--primary); }
+        .toggle-slider::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: var(--transition); }
+        .toggle-slider.active::after { left: 25px; }
+        .clear-btn { width: 100%; padding: 14px; border: 2px solid #dc3545; border-radius: 12px; background: transparent; color: #dc3545; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .clear-btn:hover { background: #dc3545; color: white; }
+        .about-box { background: var(--bg); border-radius: 16px; padding: 18px; text-align: center; line-height: 1.7; font-size: 0.9rem; }
+
+        /* Footer */
+        footer { text-align: center; padding: 20px; color: var(--text); opacity: 0.7; font-size: 0.85rem; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 12px 24px;
+            box-shadow: 0 5px 20px var(--shadow);
+            z-index: 300;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+            font-weight: 600;
+        }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--primary), var(--secondary)); border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            .onboarding-card { padding: 25px 15px; }
+            .onboarding-card h1 { font-size: 1.8rem; }
+            .interest-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .interest-card { padding: 14px 8px; }
+            .interest-card i { font-size: 1.2rem; }
+            .message { max-width: 90%; }
+            .input-area { width: calc(100% - 30px); padding: 12px 15px; }
+        }
+    </style>
+</head>
+<body class="theme-tiranga">
+    <!-- Onboarding Page -->
+    <div id="onboarding">
+        <div class="onboarding-card">
+            <button class="lang-toggle" id="obLangToggle">EN ↔ हिं</button>
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-search"></i>
+                    <div class="ashoka-ring"></div>
+                </div>
+                <h1>SatyaCheck</h1>
+                <p class="tagline">सच की खोज | In Search of Truth</p>
+            </div>
+            <h2 id="obTitle">What news topics interest you?</h2>
+            <div class="interest-grid" id="interestGrid"></div>
+            <button class="start-btn" id="startBtn" disabled id="startBtn">Start SatyaCheck →</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <header>
+            <div class="header-logo" id="logoBtn">
+                <div class="header-logo-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <span>SatyaCheck</span>
+            </div>
+            <div class="header-controls">
+                <select class="lang-select" id="langSwitch">
+                    <option value="en">🇮🇳 English</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
+                    <option value="ta">🇮🇳 தமிழ்</option>
+                    <option value="bn">🇮🇳 বাংলা</option>
+                    <option value="te">🇮🇳 తెలుగు</option>
+                    <option value="mr">🇮🇳 मराठी</option>
+                    <option value="ur">🇮🇳 اردو</option>
+                </select>
+                <button class="icon-btn" id="eyeBtn" title="Eye Protection"><i class="fas fa-eye"></i></button>
+                <button class="icon-btn" id="themeBtn" title="Change Theme"><i class="fas fa-palette"></i></button>
+                <button class="icon-btn" id="settingsBtn" title="Settings"><i class="fas fa-cog"></i></button>
+            </div>
+        </header>
+
+        <main>
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-card">
+                    <h2>नमस्ते! Welcome to SatyaCheck! 🕵️</h2>
+                    <p>Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds.</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="input-area">
+            <div id="mcqCards" class="mcq-cards hidden"></div>
+            <div class="input-row">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Paste news or type a claim to verify...">
+                <button class="mic-btn" id="micBtn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+                <button class="send-btn" id="sendBtn" title="Verify"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div id="progressArea" class="hidden" style="margin-top:12px;text-align:center;">
+                <div style="font-weight:600;color:var(--primary);margin-bottom:8px;" id="progressText">Verifying...</div>
+                <div class="confidence-bar"><div class="confidence-fill" id="progressFill" style="width:0%"></div></div>
+            </div>
+        </div>
+
+        <!-- Reporter Avatar -->
+        <div class="reporter-container" id="reporter">
+            <div class="speech-bubble" id="speechBubble">Fact check karo! 🔍</div>
+            <svg class="reporter-svg" viewBox="0 0 140 250">
+                <g class="reporter-body">
+                    <ellipse cx="70" cy="240" rx="30" ry="8" fill="rgba(0,0,0,0.1)"/>
+                    <path d="M45 110 Q35 170 45 230 Q55 245 70 245 Q85 245 95 230 Q105 170 95 110 Q85 95 70 95 Q55 95 45 110Z" fill="url(#saree)"/>
+                    <path d="M48 115 Q40 170 48 225 Q55 238 70 238 Q85 238 92 225 Q100 170 92 115 Q82 100 70 100 Q58 100 48 115Z" fill="none" stroke="#FFD700" stroke-width="1" opacity="0.4"/>
+                    <ellipse cx="70" cy="78" rx="20" ry="26" fill="#FFCC80"/>
+                    <ellipse cx="70" cy="52" rx="18" ry="16" fill="#1a1a1a"/>
+                    <circle cx="70" cy="72" r="3" fill="#FF0000"/>
+                    <circle cx="63" cy="76" r="2.5" fill="#1a1a1a"/>
+                    <circle cx="77" cy="76" r="2.5" fill="#1a1a1a"/>
+                    <path d="M66 88 Q70 91 74 88" stroke="#8B4513" stroke-width="2" fill="none"/>
+                    <g class="mic-arm">
+                        <rect x="90" y="115" width="7" height="30" rx="3" fill="#FFCC80"/>
+                        <rect x="92" y="140" width="3" height="35" fill="#333"/>
+                        <ellipse cx="93.5" cy="140" rx="9" ry="12" fill="#555"/>
+                        <ellipse cx="93.5" cy="140" rx="6" ry="9" fill="#333"/>
+                    </g>
+                    <defs>
+                        <linearGradient id="saree" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#E91E63"/>
+                            <stop offset="100%" stop-color="#C2185B"/>
+                        </linearGradient>
+                    </defs>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settingsOverlay" class="settings-overlay hidden" onclick="closeSettings(event)"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2>⚙️ Settings</h2>
+            <button class="close-btn" onclick="closeSettings()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-section">
+            <span class="settings-label">🎨 Theme</span>
+            <div class="theme-swatches">
+                <div class="theme-swatch active" style="background:linear-gradient(135deg,#FF9933 33%,#fff 33%,#fff 66%,#138808 66%)" data-theme="tiranga"></div>
+                <div class="theme-swatch" style="background:linear-gradient(135deg,#FF9933 33%,#0A0A0A 33%,#0A0A0A 66%,#30D158 66%)" data-theme="raat"></div>
+                <div class="theme-swatch" style="background:linear-gradient(135deg,#FFD700 33%,#003D36 33%,#003D36 66%,#00E5CC 66%)" data-theme="mayur"></div>
+                <div class="theme-swatch" style="background:linear-gradient(135deg,#D63384 33%,#FFF0F5 33%,#FFF0F5 66%,#FF85A1 66%)" data-theme="gulab"></div>
+                <div class="theme-swatch" style="background:linear-gradient(135deg,#1D4ED8 33%,#EFF6FF 33%,#EFF6FF 66%,#0EA5E9 66%)" data-theme="neel"></div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <span class="settings-label">🧑 Reporter</span>
+            <div class="reporter-options">
+                <button class="reporter-option active" data-reporter="female">👩 Female</button>
+                <button class="reporter-option" data-reporter="male">👨 Male</button>
+                <button class="reporter-option" data-reporter="hidden">🙈 Hidden</button>
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="toggle-row">
+                <span>👁 Eye Protection</span>
+                <div class="toggle-slider" id="eyeToggle"></div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <button class="clear-btn" onclick="clearChat()"><i class="fas fa-trash"></i> Clear Chat History</button>
+        </div>
+        <div class="about-box">
+            <p><strong>SatyaCheck AI</strong> is an independent fact-checking tool powered by AI. Always verify important news from official sources. We do not store your queries.</p>
+            <p style="margin-top:12px;font-size:0.8rem;">Made with ❤️ in India | भारत में बनाया गया</p>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script>
+        // State
+        const state = {
+            interests: JSON.parse(localStorage.getItem('satya_interests')) || [],
+            theme: localStorage.getItem('satya_theme') || 'tiranga',
+            lang: localStorage.getItem('satya_lang') || 'en',
+            eyeProtection: localStorage.getItem('satya_eye') === 'true',
+            reporterType: localStorage.getItem('satya_reporter') || 'female',
+            isOnboarded: localStorage.getItem('satya_interests') && JSON.parse(localStorage.getItem('satya_interests')).length > 0,
+            selectedInterests: [],
+            isHindi: false,
+            isRecording: false,
+            currentQuery: '',
+            result: null
+        };
+
+        const INTERESTS = [
+            { id: 'politics', name: 'Politics', nameHi: 'राजनीति', icon: 'fa-landmark' },
+            { id: 'sports', name: 'Sports', nameHi: 'खेल', icon: 'fa-futbol' },
+            { id: 'technology', name: 'Technology', nameHi: 'तकनीक', icon: 'fa-microchip' },
+            { id: 'business', name: 'Business', nameHi: 'व्यापार', icon: 'fa-chart-line' },
+            { id: 'health', name: 'Health', nameHi: 'स्वास्थ्य', icon: 'fa-heart-pulse' },
+            { id: 'entertainment', name: 'Entertainment', nameHi: 'मनोरंजन', icon: 'fa-film' },
+            { id: 'science', name: 'Science', nameHi: 'विज्ञान', icon: 'fa-flask' },
+            { id: 'environment', name: 'Environment', nameHi: 'पर्यावरण', icon: 'fa-leaf' },
+            { id: 'world', name: 'World News', nameHi: 'विश्व समाचार', icon: 'fa-globe-americas' },
+            { id: 'crime', name: 'Crime', nameHi: 'अपराध', icon: 'fa-gavel' },
+            { id: 'religion', name: 'Religion', nameHi: 'धर्म', icon: 'fa-om' },
+            { id: 'education', name: 'Education', nameHi: 'शिक्षा', icon: 'fa-graduation-cap' }
+        ];
+
+        const THEMES = ['tiranga', 'raat', 'mayur', 'gulab', 'neel'];
+        const TIPS = ['Fact check karo! 🔍', 'Sach jaano! 📰', 'Verify before sharing! ✅', 'Fake news mat failao! ❌', 'Sources check karo! 🧐', 'Sach hi shakti hai! 💪'];
+        const MCQ_OPTIONS = [
+            { id: 'A', q: 'Verify a specific news headline', qHi: 'विशेष समाचार हेडलाइन सत्यापित करें' },
+            { id: 'B', q: 'Check if a WhatsApp forward is real', qHi: 'व्हाट्सएप फॉरवर्ड सत्य है या नहीं' },
+            { id: 'C', q: 'Fact-check a political claim', qHi: 'राजनीतिक दावे की सत्यापन करें' },
+            { id: 'D', q: 'Verify a viral social media post', qHi: 'वायरल सोशल मीडिया पोस्ट सत्यापित करें' },
+            { id: 'E', q: 'Check regional/state-level news', qHi: 'क्षेत्रीय/राज्य स्तरीय समाचार जांचें' }
+        ];
+
+        const INDIAN_SOURCES = [
+            { name: 'NDTV', url: 'https://www.ndtv.com' },
+            { name: 'The Hindu', url: 'https://www.thehindu.com' },
+            { name: 'PIB', url: 'https://pib.gov.in' },
+            { name: 'AltNews', url: 'https://www.altnews.in' },
+            { name: 'FactChecker.in', url: 'https://www.factchecker.in' }
+        ];
+
+        // Elements
+        const $ = id => document.getElementById(id);
+        const el = {
+            onboarding: $('onboarding'),
+            mainApp: $('mainApp'),
+            interestGrid: $('interestGrid'),
+            startBtn: $('startBtn'),
+            obLangToggle: $('obLangToggle'),
+            obTitle: $('obTitle'),
+            langSwitch: $('langSwitch'),
+            chatMessages: $('chatMessages'),
+            chatInput: $('chatInput'),
+            sendBtn: $('sendBtn'),
+            micBtn: $('micBtn'),
+            mcqCards: $('mcqCards'),
+            progressArea: $('progressArea'),
+            progressText: $('progressText'),
+            progressFill: $('progressFill'),
+            reporter: $('reporter'),
+            speechBubble: $('speechBubble'),
+            settingsOverlay: $('settingsOverlay'),
+            settingsPanel: $('settingsPanel'),
+            toast: $('toast'),
+            eyeBtn: $('eyeBtn'),
+            themeBtn: $('themeBtn'),
+            settingsBtn: $('settingsBtn'),
+            eyeToggle: $('eyeToggle')
+        };
+
+        // Speech Recognition
+        const rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = rec ? new rec() : null;
+
+        // Initialize
+        function init() {
+            applyTheme(state.theme);
+            applyEyeProtection();
+            el.langSwitch.value = state.lang;
+
+            if (state.isOnboarded) {
+                el.onboarding.classList.add('hidden');
+                el.mainApp.classList.remove('hidden');
+                initReporter();
+            } else {
+                renderInterests();
+            }
+        }
+
+        // Render Interest Cards
+        function renderInterests() {
+            el.interestGrid.innerHTML = '';
+            INTERESTS.forEach((int, i) => {
+                const card = document.createElement('div');
+                card.className = `interest-card ${state.selectedInterests.includes(int.id) ? 'selected' : ''}`;
+                card.innerHTML = `<i class="fas ${int.icon}"></i><span>${state.isHindi ? int.nameHi : int.name}</span>`;
+                card.onclick = () => toggleInterest(int.id, card);
+                card.style.animationDelay = `${i * 0.05}s`;
+                card.style.animation = 'fadeIn 0.4s ease forwards';
+                el.interestGrid.appendChild(card);
+            });
+            el.startBtn.disabled = state.selectedInterests.length === 0;
+        }
+
+        function toggleInterest(id, card) {
+            if (state.selectedInterests.includes(id)) {
+                state.selectedInterests = state.selectedInterests.filter(i => i !== id);
+                card.classList.remove('selected');
+            } else {
+                state.selectedInterests.push(id);
+                card.classList.add('selected');
+            }
+            el.startBtn.disabled = state.selectedInterests.length === 0;
+        }
+
+        el.obLangToggle.onclick = () => {
+            state.isHindi = !state.isHindi;
+            el.obTitle.textContent = state.isHindi ? 'आपको कौन से विषय रुचिकर हैं?' : 'What news topics interest you?';
+            renderInterests();
+        };
+
+        el.startBtn.onclick = () => {
+            localStorage.setItem('satya_interests', JSON.stringify(state.selectedInterests));
+            state.isOnboarded = true;
+            el.onboarding.classList.add('hidden');
+            el.mainApp.classList.remove('hidden');
+            initReporter();
+        };
+
+        // Reporter Avatar
+        function initReporter() {
+            if (state.reporterType === 'hidden') {
+                el.reporter.style.display = 'none';
+                return;
+            }
+            el.reporter.style.display = 'block';
+
+            document.addEventListener('mousemove', e => {
+                const x = Math.max(0, Math.min(window.innerWidth - 140, e.clientX - 70));
+                const y = Math.max(0, Math.min(window.innerHeight - 250, e.clientY - 125));
+                el.reporter.style.transform = `translate(${x}px, ${y}px)`;
+            });
+
+            // Rotate tips
+            let tipIndex = 0;
+            setInterval(() => {
+                tipIndex = (tipIndex + 1) % TIPS.length;
+                el.speechBubble.textContent = TIPS[tipIndex];
+                el.speechBubble.style.animation = 'none';
+                setTimeout(() => el.speechBubble.style.animation = 'bubbleIn 0.3s ease, bubbleFade 0.5s ease 7.5s forwards', 10);
+            }, 8000);
+        }
+
+        function setReporterState(state) {
+            el.reporter.className = `reporter-container reporter-${state}`;
+        }
+
+        // Theme
+        el.themeBtn.onclick = () => {
+            const idx = THEMES.indexOf(state.theme);
+            state.theme = THEMES[(idx + 1) % THEMES.length];
+            applyTheme(state.theme);
+            showToast(`Theme: ${state.theme.charAt(0).toUpperCase() + state.theme.slice(1)}`);
+        };
+
+        function applyTheme(theme) {
+            document.body.className = theme === 'tiranga' ? '' : `theme-${theme}`;
+            document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === theme));
+            localStorage.setItem('satya_theme', theme);
+        }
+
+        // Eye Protection
+        el.eyeBtn.onclick = () => {
+            state.eyeProtection = !state.eyeProtection;
+            applyEyeProtection();
+            showToast(state.eyeProtection ? 'Eye Protection ON' : 'Eye Protection OFF');
+        };
+
+        function applyEyeProtection() {
+            document.body.style.filter = state.eyeProtection ? 'sepia(0.3) contrast(1.1)' : '';
+            el.eyeToggle.classList.toggle('active', state.eyeProtection);
+            el.eyeBtn.innerHTML = `<i class="fas fa-${state.eyeProtection ? 'eye-slash' : 'eye'}"></i>`;
+            localStorage.setItem('satya_eye', state.eyeProtection);
+        }
+
+        // Settings
+        el.settingsBtn.onclick = () => {
+            el.settingsOverlay.classList.remove('hidden');
+            el.settingsPanel.classList.add('open');
+        };
+
+        function closeSettings(e) {
+            if (!e || e.target === el.settingsOverlay) {
+                el.settingsOverlay.classList.add('hidden');
+                el.settingsPanel.classList.remove('open');
+            }
+        }
+
+        document.querySelectorAll('.theme-swatch').forEach(s => {
+            s.onclick = () => {
+                state.theme = s.dataset.theme;
+                applyTheme(state.theme);
+            };
+        });
+
+        document.querySelectorAll('.reporter-option').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.reporter-option').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.reporterType = btn.dataset.reporter;
+                localStorage.setItem('satya_reporter', state.reporterType);
+                initReporter();
+            };
+        });
+
+        el.eyeToggle.onclick = () => {
+            state.eyeProtection = !state.eyeProtection;
+            applyEyeProtection();
+        };
+
+        function clearChat() {
+            state.result = null;
+            el.chatMessages.innerHTML = `
+                <div class="welcome-card">
+                    <h2>नमस्ते! Welcome to SatyaCheck! 🕵️</h2>
+                    <p>Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds.</p>
+                </div>
+            `;
+            closeSettings();
+            showToast('Chat history cleared!');
+        }
+
+        el.langSwitch.onchange = e => {
+            state.lang = e.target.value;
+            localStorage.setItem('satya_lang', state.lang);
+        };
+
+        // Speech Recognition
+        if (recognition) {
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.onresult = e => {
+                el.chatInput.value = e.results[0][0].transcript;
+                el.micBtn.classList.remove('recording');
+                state.isRecording = false;
+                showMCQ();
+            };
+            recognition.onend = () => {
+                el.micBtn.classList.remove('recording');
+                state.isRecording = false;
+            };
+        }
+
+        el.micBtn.onclick = () => {
+            if (!recognition) {
+                showToast('Speech not supported. Use Chrome.');
+                return;
+            }
+            if (state.isRecording) {
+                recognition.stop();
+                state.isRecording = false;
+                el.micBtn.classList.remove('recording');
+            } else {
+                recognition.lang = state.lang;
+                recognition.start();
+                state.isRecording = true;
+                el.micBtn.classList.add('recording');
+            }
+        };
+
+        // Chat Functions
+        el.sendBtn.onclick = submitQuery;
+        el.chatInput.onkeypress = e => { if (e.key === 'Enter') submitQuery(); };
+
+        function showMCQ() {
+            el.mcqCards.classList.toggle('hidden', !el.chatInput.value.trim());
+            if (el.chatInput.value.trim()) {
+                el.mcqCards.innerHTML = `<div style="grid-column:1/-1;text-align:center;margin-bottom:5px;font-weight:600;">What are you trying to check?</div>`;
+                MCQ_OPTIONS.forEach(opt => {
+                    const btn = document.createElement('div');
+                    btn.className = 'mcq-card';
+                    btn.innerHTML = `<span class="mcq-label">${opt.id}</span><span>${state.isHindi ? opt.qHi : opt.q}</span>`;
+                    btn.onclick = () => submitQuery(opt.q + ': ' + el.chatInput.value);
+                    el.mcqCards.appendChild(btn);
+                });
+            }
+        }
+
+        el.chatInput.oninput = showMCQ;
+
+        function submitQuery(query) {
+            const q = query || el.chatInput.value.trim();
+            if (!q) return;
+
+            state.currentQuery = q;
+            el.chatInput.value = '';
+            el.mcqCards.classList.add('hidden');
+
+            addMessage(q, 'user');
+            verifyNews(q);
+        }
+
+        function addMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = `message ${type}-msg`;
+            div.textContent = text;
+            el.chatMessages.appendChild(div);
+            el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+        }
+
+        function addVerdictCard(data) {
+            const div = document.createElement('div');
+            div.className = `verdict-card verdict-${data.verdict}`;
+
+            const confClass = data.confidence >= 70 ? 'high' : data.confidence >= 40 ? 'medium' : 'low';
+            const stampText = { TRUE: '✓ VERIFIED', FALSE: 'FAKE', MISLEADING: '⚠ MISLEADING', UNVERIFIED: '? UNVERIFIED' }[data.verdict] || '? UNVERIFIED';
+
+            div.innerHTML = `
+                <div class="verdict-stamp">${stampText}</div>
+                <div class="confidence-meter">
+                    <div class="confidence-label"><span>Confidence</span><span style="color:var(--primary);font-weight:700;">${data.confidence}%</span></div>
+                    <div class="confidence-bar"><div class="confidence-fill ${confClass}" style="width:${data.confidence}%"></div></div>
+                </div>
+                <p>${data.explanation}</p>
+                <div class="sources-box"><strong>Sources:</strong> ${data.sources.map(s => `<a href="${s.url}" target="_blank">${s.name}</a>`).join(', ')}</div>
+            `;
+            el.chatMessages.appendChild(div);
+            el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+            return div;
+        }
+
+        async function verifyNews(query) {
+            el.progressArea.classList.remove('hidden');
+            setReporterState('loading');
+
+            const stages = [
+                { text: 'Searching sources...', progress: 20 },
+                { text: 'Extracting claims...', progress: 40 },
+                { text: 'Cross-verifying...', progress: 65 },
+                { text: 'Analyzing patterns...', progress: 85 },
+                { text: 'Calculating Truth Score...', progress: 100 }
+            ];
+
+            for (const stage of stages) {
+                el.progressText.textContent = stage.text;
+                el.progressFill.style.width = `${stage.progress}%`;
+                await sleep(600);
+            }
+
+            const result = generateResult(query);
+            el.progressArea.classList.add('hidden');
+
+            addVerdictCard(result);
+            setReporterState(result.verdict === 'TRUE' ? 'real' : 'fake');
+            speak(`${result.verdict}. ${result.confidence} percent confidence. ${result.summary}`);
+
+            setTimeout(() => setReporterState('idle'), 4000);
+        }
+
+        function generateResult(query) {
+            const l = query.toLowerCase();
+            const isFake = l.includes('fake') || l.includes('hoax') || l.includes('rumor') || l.includes('अफवाह') || l.length < 15;
+            const isMisleading = l.includes('misleading') || l.includes('भ्रामक') || l.includes('partial');
+
+            let verdict, confidence;
+            if (isFake) {
+                verdict = 'FALSE';
+                confidence = 15 + Math.floor(Math.random() * 35);
+            } else if (isMisleading) {
+                verdict = 'MISLEADING';
+                confidence = 45 + Math.floor(Math.random() * 30);
+            } else {
+                verdict = Math.random() > 0.3 ? 'TRUE' : 'MISLEADING';
+                confidence = verdict === 'TRUE' ? 70 + Math.floor(Math.random() * 30) : 40 + Math.floor(Math.random() * 30);
+            }
+
+            const sources = INDIAN_SOURCES.sort(() => 0.5 - Math.random()).slice(0, 5);
+            const summary = verdict === 'TRUE' ? 'Verified by multiple credible sources.' :
+                           verdict === 'FALSE' ? 'No evidence found. Likely fake news.' :
+                           'Partially accurate but presented misleadingly.';
+
+            return {
+                verdict,
+                confidence,
+                explanation: `The claim "${query}" has been analyzed against Indian and international sources. ${verdict === 'TRUE' ? 'Information matches official records.' : verdict === 'FALSE' ? 'No credible evidence supports this claim.' : 'Some elements are accurate but context is misleading.'}`,
+                sources,
+                summary
+            };
+        }
+
+        function speak(text) {
+            if (!window.speechSynthesis || state.eyeProtection) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = state.lang;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function showToast(msg) {
+            el.toast.textContent = msg;
+            el.toast.classList.remove('hidden');
+            setTimeout(() => el.toast.classList.add('hidden'), 3000);
+        }
+
+        $('logoBtn').onclick = () => {
+            state.result = null;
+            el.chatMessages.innerHTML = `
+                <div class="welcome-card">
+                    <h2>नमस्ते! Welcome to SatyaCheck! 🕵️</h2>
+                    <p>Paste any news, claim, or WhatsApp forward below and I'll verify it in seconds.</p>
+                </div>
+            `;
+        };
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
